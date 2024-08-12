@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/andreadebortoli2/first-GO-project/pkg/config"
+	"github.com/andreadebortoli2/first-GO-project/pkg/models"
 )
 
 var app *config.AppConfig
@@ -17,8 +18,13 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+// ? prepared for later usage
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 // RenderTemplates renders templates using html/template
-func RenderTemplates(w http.ResponseWriter, tmpl string) {
+func RenderTemplates(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 
 	/*
 		// create a template cache
@@ -44,9 +50,13 @@ func RenderTemplates(w http.ResponseWriter, tmpl string) {
 	if !ok {
 		log.Fatal("Could not get template from template cache")
 	}
+
+	// ? preapared for later usage
+	td = AddDefaultData(td)
+
 	// if an error occur, for a precise check, i add a buffer to suspend the actions, execute the code and see where the error is coming from
 	buf := new(bytes.Buffer)
-	err := requestedTemplate.Execute(buf, nil)
+	err := requestedTemplate.Execute(buf, td)
 	if err != nil {
 		log.Println(err)
 	}

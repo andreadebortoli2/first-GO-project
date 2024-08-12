@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/andreadebortoli2/first-GO-project/pkg/config"
+	"github.com/andreadebortoli2/first-GO-project/pkg/models"
 	"github.com/andreadebortoli2/first-GO-project/pkg/render"
 )
 
@@ -29,10 +30,15 @@ func NewHandlers(r *Repository) {
 
 // Home is the home page handler
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplates(w, "home.page.tmpl")
+	render.RenderTemplates(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 // About is the about page handler
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplates(w, "about.page.tmpl")
+	// pass some data to about page
+	stringMap := make(map[string]string)
+	stringMap["test"] = "Hello, passing data successfully"
+	render.RenderTemplates(w, "about.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
