@@ -2,29 +2,51 @@ package render
 
 import (
 	"bytes"
+	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
-	"text/template"
+
+	"github.com/andreadebortoli2/first-GO-project/pkg/config"
 )
+
+var app *config.AppConfig
+
+// NewTemplates set config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
 
 // RenderTemplates renders templates using html/template
 func RenderTemplates(w http.ResponseWriter, tmpl string) {
 
-	// create a template cache
-	templateCache, err := createTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+	/*
+		// create a template cache
+		templateCache, err := CreateTemplateCache()
+		if err != nil {
+			log.Fatal(err)
+		} */
+
+	var templateCache map[string]*template.Template
+
+	// set if statement to work in built or dev mode
+	if app.UseCache {
+		// built mode
+		// instead of create the template cache each time, i want to use the app config template cache
+		templateCache = app.TemplateCache
+	} else {
+		// dev mode (re-create the template cache each time to check changes i make developing)
+		templateCache, _ = CreateTemplateCache()
 	}
 
 	// get requested from cache
 	requestedTemplate, ok := templateCache[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from template cache")
 	}
 	// if an error occur, for a precise check, i add a buffer to suspend the actions, execute the code and see where the error is coming from
 	buf := new(bytes.Buffer)
-	err = requestedTemplate.Execute(buf, nil)
+	err := requestedTemplate.Execute(buf, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -38,7 +60,7 @@ func RenderTemplates(w http.ResponseWriter, tmpl string) {
 
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 
 	// when i render a page i first need the page template to render nd then all layout and partials so:
