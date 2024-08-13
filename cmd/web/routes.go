@@ -24,8 +24,10 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(middleware.Recoverer)
 	// middleware test func
 	mux.Use(WriteToConsole)
-	// add crsf token in cookies for navigation security
+	// add crsf token in cookies for POST protection
 	mux.Use(NoSurf)
+	// load and use the session
+	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)

@@ -35,9 +35,9 @@ func RenderTemplates(w http.ResponseWriter, tmpl string, td *models.TemplateData
 
 	var templateCache map[string]*template.Template
 
-	// set if statement to work in built or dev mode
+	// set if statement to work in production or dev mode
 	if app.UseCache {
-		// built mode
+		// production mode
 		// instead of create the template cache each time, i want to use the app config template cache
 		templateCache = app.TemplateCache
 	} else {

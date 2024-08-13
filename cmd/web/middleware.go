@@ -7,6 +7,7 @@ import (
 	"github.com/justinas/nosurf"
 )
 
+// WriteToConsole just a test to see if middlewares work
 func WriteToConsole(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Hit the page")
@@ -14,14 +15,20 @@ func WriteToConsole(next http.Handler) http.Handler {
 	})
 }
 
+// NoSurf add CSRF protection to all POST requests
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
 		Path:     "/",
-		Secure:   false, //while in dev, for built set for https
+		Secure:   app.InProduction, //while in dev falsee, for production set to true for https
 		SameSite: http.SameSiteLaxMode,
 	})
 	return csrfHandler
+}
+
+// SessionLoad loads and saves the session on every request
+func SessionLoad(next http.Handler) http.Handler {
+	return session.LoadAndSave(next)
 }
