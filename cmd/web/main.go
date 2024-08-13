@@ -31,9 +31,19 @@ func main() {
 	// set the config template cache available to render package
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
+	/*
+		// defining routes, using them and serve all in main(not best practice)
+		http.HandleFunc("/", handlers.Repo.Home)
+		http.HandleFunc("/about", handlers.Repo.About)
+		_ = http.ListenAndServe(portNumber, nil) */
 
 	_, _ = fmt.Printf("Starting application on port %s \n", portNumber)
-	_ = http.ListenAndServe(portNumber, nil)
+
+	// routing with pat
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 }
