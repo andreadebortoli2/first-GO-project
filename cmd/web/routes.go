@@ -20,8 +20,12 @@ func routes(app *config.AppConfig) http.Handler {
 	// routing with chi
 	mux := chi.NewRouter()
 
-	// recover from panic
+	// recover from panics, log the panic and return an HTTP 500 status(if possible)
 	mux.Use(middleware.Recoverer)
+	// middleware test func
+	mux.Use(WriteToConsole)
+	// add crsf token in cookies for navigation security
+	mux.Use(NoSurf)
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
